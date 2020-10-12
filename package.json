@@ -2,7 +2,11 @@
   "name": "currency-rates",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:ralekna/currency-rates.git"
+  },
+  "author": "Rytis Alekna",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -21,11 +25,15 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@hapi/joi": "^17.1.1",
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.5.0",
     "@nestjs/core": "^7.0.0",
     "@nestjs/platform-express": "^7.0.0",
     "bigint-money": "^1.2.0",
+    "class-transformer": "^0.3.1",
+    "class-validator": "^0.12.2",
+    "node-fetch": "^2.6.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.5.4"
@@ -34,7 +42,8 @@
     "@nestjs/cli": "^7.0.0",
     "@nestjs/schematics": "^7.0.0",
     "@nestjs/testing": "^7.0.0",
-    "@types/express": "^4.17.3",
+    "@types/express": "^4.17.8",
+    "@types/hapi__joi": "^17.1.6",
     "@types/jest": "25.2.3",
     "@types/node": "^13.9.1",
     "@types/supertest": "^2.0.8",

@@ -26,7 +26,11 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Basic currency conversion service
+
+## Usage
+
+GET http://localhost:3000/quote?base_currency=USD&quote_currency=ILS&base_amount=1500
 
 ## Installation
 
