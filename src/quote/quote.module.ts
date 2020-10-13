@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { HttpModule, Logger, Module } from "@nestjs/common";
 import { ConfigService } from '@nestjs/config';
 import { Cache, LinkedLRUCache } from "../utils/cache";
 import { CurrencyRatesService } from "./currency-rates.service";
@@ -18,14 +18,20 @@ const cacheFactory = {
 const supportedCurrencies = {
     provide: 'SUPPORTED_CURRENCIES',
     useFactory: (configService: ConfigService): string[] => {
-        return configService.get<string>('SUPPORTED_CURRENCIES')?.split(',');
+        return configService.get<string>('SUPPORTED_CURRENCIES')?.split(',') ?? [];
     },
     inject: [ConfigService]
 };
 
 @Module({
-    imports: [],
+    imports: [HttpModule],
     controllers: [QuoteController],
-    providers: [cacheFactory, supportedCurrencies, CurrencyRatesService, IsSupportedCurrency]
+    providers: [
+        cacheFactory, 
+        supportedCurrencies, 
+        CurrencyRatesService, 
+        IsSupportedCurrency,
+        Logger
+    ]
 })
 export class QuoteModule {}

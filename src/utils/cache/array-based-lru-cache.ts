@@ -1,7 +1,6 @@
 import { Injectable } from "@nestjs/common";
+import { without } from "../array-utils";
 import { Cache } from "./abstract-cache";
-
-const without = (item: any) => (arrayItem: any) => arrayItem !== item;
 
 /**
  * I like minimalism of this implementation but it has significantly slower performance because of array recreation

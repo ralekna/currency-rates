@@ -1,0 +1,1 @@
+export const without = (item: any) => (arrayItem: any) => arrayItem !== item;

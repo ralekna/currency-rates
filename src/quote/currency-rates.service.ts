@@ -1,9 +1,9 @@
-import { BadGatewayException, Injectable } from "@nestjs/common";
+import { BadGatewayException, HttpService, Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { Cache } from "../utils/cache";
 import { Money } from "bigint-money";
 import * as Joi from "@hapi/joi";
-import fetch from "node-fetch";
+import { without } from "../utils/array-utils";
 
 export type ExchangeResponse = {
     rates: Record<string, number>,
@@ -23,14 +23,16 @@ export const exchangeResponseSchema = Joi.object<ExchangeResponse>({
 export class CurrencyRatesService {
 
     private readonly currencyExchangeServiceUrl: string;
-    private readonly supportedCurrencies: string;
 
     constructor(
-        private cache: Cache<Promise<Rates>, string>, 
-        private readonly configService: ConfigService
+        private cache: Cache<Promise<Rates>, string>,
+        private readonly configService: ConfigService,
+        private httpService: HttpService,
+        @Inject('SUPPORTED_CURRENCIES') private supportedCurrencies: string[],
+        private logger: Logger
     ) {
         this.currencyExchangeServiceUrl = this.configService.get('QUOTES_SERVICE_PATH');
-        this.supportedCurrencies = this.configService.get('SUPPORTED_CURRENCIES');
+        this.logger.setContext('CurrencyRatesService');
     }
 
     async getRate(baseCurrency: string, quoteCurrency: string, amount: string): Promise<[string /* exchange rate */, string /* quote amount */]> {
@@ -56,11 +58,13 @@ export class CurrencyRatesService {
     }
 
     private async fetchRates(baseCurrency: string): Promise<ExchangeResponse> {
-        return fetch(`${this.currencyExchangeServiceUrl}?base=${baseCurrency}&symbols=${this.supportedCurrencies}`)
-            .then(rawResponse => rawResponse.json())
-            .then(response => Joi.attempt(response, exchangeResponseSchema))
+        const url = `${this.currencyExchangeServiceUrl}?base=${baseCurrency}&symbols=${this.supportedCurrencies.filter(without(baseCurrency)).join(',')}`;
+        this.logger.log(`Attemting to retrieve rate: ${url}`);
+
+        return this.httpService.get(url).toPromise()
+            .then(({data}) => Joi.attempt(data, exchangeResponseSchema))
             .catch(error => {
-                console.error(error);
+                this.logger.error(error);
                 throw new BadGatewayException('Failed to retrieve rate from 3rd party service');
             });
     }
