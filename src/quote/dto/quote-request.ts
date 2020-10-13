@@ -1,11 +1,12 @@
-import { Inject } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { IsNumberString } from "class-validator";
+import { IsNumberString, Validate } from "class-validator";
+import { IsSupportedCurrency } from "../validators/supported-currency-validator";
 
 export class QuoteRequest {
     
+    @Validate(IsSupportedCurrency, {message: 'Unsupported currency'})
     base_currency: string;
 
+    @Validate(IsSupportedCurrency, {message: 'Unsupported currency'})
     quote_currency: string;
 
     @IsNumberString()

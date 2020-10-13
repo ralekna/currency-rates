@@ -1,8 +1,9 @@
 import { Module } from "@nestjs/common";
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Cache, LinkedLRUCache } from "src/utils/cache";
+import { ConfigService } from '@nestjs/config';
+import { Cache, LinkedLRUCache } from "../utils/cache";
 import { CurrencyRatesService } from "./currency-rates.service";
 import { QuoteController } from "./quote.controller";
+import { IsSupportedCurrency } from "./validators/supported-currency-validator";
 
 // Provide cache implementation for DI
 const cacheFactory = {
@@ -25,6 +26,6 @@ const supportedCurrencies = {
 @Module({
     imports: [],
     controllers: [QuoteController],
-    providers: [cacheFactory, supportedCurrencies, CurrencyRatesService]
+    providers: [cacheFactory, supportedCurrencies, CurrencyRatesService, IsSupportedCurrency]
 })
 export class QuoteModule {}
